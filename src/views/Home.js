@@ -1,14 +1,11 @@
-import React from 'react'
 import HeroesList from '../components/HeroesList'
 
-class Home extends React.Component {
-  render() {
-    return (
-      <div>
-        <HeroesList></HeroesList>
-      </div>
-    )
-  }
+function Home () {
+  return (
+    <div className="bg-gray-300">
+      <HeroesList />
+    </div>
+  )
 }
 
 export default Home;

@@ -1,23 +1,31 @@
-import {useState, useEffect} from 'react'
+import {useFetch} from '../hooks/ApiRequest'
+import Loader from './Loader'
 import HeroesCard from './HeroesCard'
-
-
+import ErrorAllert from './ErrorAlert'
 function HeroesList () {
-  const [heroes, setHeroes] = useState([]);
-  useEffect(() => {
-    fetch('https://api.opendota.com/api/heroes')
-      .then(response => response.json())
-      .then(data => setHeroes(data)
-    )
-  }, [])
-  return (
-    <div className="flex flex-wrap justify-center items-center -mx-5 overflow-hidden">
+  let [heroes] = useFetch('https://api.opendota.com/api/heroStats');
+  let content = null;
+  if(heroes.error) {
+    content = <ErrorAllert />
+  } else {
+    if(heroes.loading) {
+      content = <Loader />
+    } else {
+      content = 
+      <div className="flex flex-wrap justify-center items-center -mx-5 overflow-hidden">
       {
-        heroes.map(hero => {
-            return <HeroesCard key={hero.id} hiiro={hero}></HeroesCard>
+        heroes.data.map(hero => {
+            return <HeroesCard key={hero.id} hiiro={hero} />
           })
       }
+      </div>
+    }
+  }
+  return (
+    <div className="container mx-auto p-8">
+      {content}
     </div>
+
   )
 }
 
