@@ -1,22 +1,43 @@
 import {Link} from 'react-router-dom'
-import {setFavorites, deleteFavorite} from '../store/actions'
-import {useDispatch} from 'react-redux';
-import {useSelector} from 'react-redux'
+import {setFavorites} from '../store/actions'
+import {useDispatch, useSelector} from 'react-redux';
+import { useEffect, useState } from 'react';
 
 function HeroesCard (props) {
   const image = `https://api.opendota.com${props.hiiro.img}`
-  const favorite = useSelector(state => state.favorites)
-
+  const dispatch = useDispatch()
+  const favorite = useSelector(state => state.favoritesReducer.favorites)
+  const [favorited, setFavorited] = useState(false)
+  useEffect(()=>{
+    for(let i = 0; i < favorite.length; i++){
+      if(favorite[i].id === props.hiiro.id){
+        setFavorited(true);
+      }
+    }
+  }, [favorite, props.hiiro.id])
   function handleFavorite (id) {
     dispatch(setFavorites(id));
   }
 
   function handleUnfavorite (id) {
-    dispatch(deleteFavorite(id));
+    setFavorited(false);
+    dispatch(setFavorites(id));
   }
 
-  let favoriteButton = 
+  let favoriteButton = null
+  if(favorited) {
+    favoriteButton = 
     <button 
+      className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-50"
+      onClick={(e)=> {
+        e.preventDefault()
+        handleUnfavorite(props.hiiro.id)
+      }}
+    >
+    <i className="fa fa-heart text-3xl text-red-600 hover:text-gray-500"></i>
+    </button>
+  } else {
+    favoriteButton = <button 
       className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
       onClick={(e)=> {
         e.preventDefault()
@@ -25,25 +46,7 @@ function HeroesCard (props) {
     >
       <i className="fa fa-heart text-2xl text-red-400 hover:text-red-600"></i>
     </button>
-
-  if(favorite) {
-    for(let i = 0; i < favorite.length; i++){
-      if(favorite[i].id === props.hiiro.id){
-        favoriteButton = 
-        <button 
-          className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-50"
-          onClick={(e)=> {
-            e.preventDefault()
-            handleUnfavorite(props.hiior.id)
-          }}
-        >
-          <i className="fa fa-heart text-3xl text-red-600 hover:text-gray-500"></i>
-        </button>
-      }
-    }
   }
-
-  const dispatch = useDispatch()
 
   return (
     <div className="mb-5 mt-10 px-5 w-1/4 overflow-hidden transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110">
@@ -63,10 +66,19 @@ function HeroesCard (props) {
           <p className="text-sm">
               {props.hiiro.roles.join(', ')}
           </p>
-          <a className="no-underline text-grey-darker hover:text-red-dark" href="/">
+          <div className="no-underline text-grey-darker hover:text-red-dark">
               <span className="hidden">Like</span>
               {favoriteButton}
-          </a>
+              {/* <button 
+                className="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+                onClick={(e)=> {
+                  e.preventDefault()
+                  handleFavorite(props.hiiro.id)
+                }}
+              >
+                <i className="fa fa-heart text-2xl text-red-400 hover:text-red-600"></i>
+              </button> */}
+          </div>
         </footer>
       </div>
     </div>

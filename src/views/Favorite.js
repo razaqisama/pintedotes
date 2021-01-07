@@ -2,7 +2,7 @@ import {useSelector} from 'react-redux'
 import HeroesCard from '../components/HeroesCard'
 
 function Favorite () {
-  const favorites = useSelector(state => state.favorites)
+  const favorites = useSelector(state => state.favoritesReducer.favorites)
   console.log(favorites, 'Ini favorites')
   return (
     // <div>

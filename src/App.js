@@ -6,45 +6,18 @@ import HeroesDetail from './views/HeroesDetail';
 import {Switch, Route} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import { useEffect } from 'react';
-import { setHeroes, setLore } from './store/actions'
-import { useState } from 'react';
+import { fetchHeroes, fetchLore } from './store/actions'
+import LandingPage from './views/LandingPage'
 
 function App() {
   const dispatch = useDispatch()
-
-  const [heroStatus, setHeroStatus] = useState({
-    loading: false
-  })
-  const [loreStatus, setLoreStatus] = useState({
-    loading: false
-  })
-
+  
   useEffect(()=>{
-    fetch("https://api.opendota.com/api/constants/heroes")
-    .then(response => response.json())
-    .then(data => {
-      dispatch(setHeroes(data))
-      setHeroStatus({
-        loading: true
-      })
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    dispatch(fetchLore());
   }, [dispatch])
 
   useEffect(()=>{
-    fetch("https://api.opendota.com/api/constants/hero_lore")
-    .then(response => response.json())
-    .then(data => {
-      dispatch(setLore(data))
-      setLoreStatus({
-        loading: true
-      })
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    dispatch(fetchHeroes());
   }, [dispatch])
 
   return (
@@ -52,14 +25,18 @@ function App() {
       <Navbar />
       <Switch>
         <Route exact path="/">
-          <Home />
+          <LandingPage />
         </Route>
-        <Route path="/heroes/:id">
-          <HeroesDetail heroStatus={heroStatus} loreStatus={loreStatus} />
+        <Route exact path="/heroes">
+          <Home />
         </Route>
         <Route exact path="/favorite">
           <Favorite />
         </Route>
+        <Route path="/heroes/:id">
+          <HeroesDetail/>
+        </Route>
+        
       </Switch>
     </div>
   );
